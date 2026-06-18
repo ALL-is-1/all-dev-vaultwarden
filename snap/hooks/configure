@@ -1,0 +1,23 @@
+#!/bin/bash
+# OPTIONAL configure hook. Most all-dev-* snaps DON'T need one — they read config
+# at runtime in snap/local/vaultwarden-run via `snapctl get`. Use this hook only to
+# seed defaults or validate input at `snap set` time. Keep it defensive: it runs
+# on install AND on every `snap set`, so it must never hard-fail on a half-set config.
+set -e
+
+# Seed defaults the first time, so `snap get all-dev-vaultwarden port` / `… bind` are populated.
+[ -z "$(snapctl get port)" ] && snapctl set port=28265
+# bind/listen address: 0.0.0.0 = LAN-reachable, 127.0.0.1 = loopback only
+[ -z "$(snapctl get bind)" ] && snapctl set bind=0.0.0.0
+
+# Example validation (uncomment):
+# port="$(snapctl get port)"
+# if ! [ "$port" -ge 1 ] 2>/dev/null; then
+#   echo "port must be a positive integer" >&2
+#   exit 1
+# fi
+# bind="$(snapctl get bind)"
+# case "$bind" in
+#   0.0.0.0|127.0.0.1|::|::1) ;;   # allow the common cases
+#   *[!0-9.]*|"") echo "bind must be an IP address" >&2; exit 1 ;;
+# esac

@@ -1,0 +1,34 @@
+#!/bin/bash
+# Launcher for all-dev-vaultwarden's `daemon` app.
+# Pattern (from docmost): read config via `snapctl get` with a default, export env,
+# wait for any backing services, then `exec` the app so it becomes PID 1 of the unit.
+set -e
+
+# --- Config (snap set all-dev-vaultwarden key=value) -----------------------------
+PORT=$(snapctl get port); PORT=${PORT:-28265}
+# bind/listen address: 0.0.0.0 = LAN-reachable, 127.0.0.1 = loopback only
+BIND=$(snapctl get bind); BIND=${BIND:-0.0.0.0}
+export PORT BIND
+
+# --- Paths -------------------------------------------------------------------
+export STATE_DIR="$SNAP_COMMON/state"
+mkdir -p "$STATE_DIR"
+
+# --- Wait for backing services (uncomment if you bundle them) ----------------
+# echo "Waiting for PostgreSQL..."
+# until "$SNAP/usr/lib/postgresql/16/bin/pg_isready" -h 127.0.0.1 -p 5432 -U postgres; do sleep 1; done
+# export DATABASE_URL="postgresql://postgres@127.0.0.1:5432/vaultwarden?schema=public"
+# export REDIS_URL="redis://127.0.0.1:6379"
+
+# Run from a writable dir that always exists (NOT $SNAP/opt/<app>, which only
+# exists for nil/dump builds — Go/Rust/npm plugins put the binary in $SNAP/bin).
+cd "$SNAP_COMMON"
+
+# --- Start the app — replace with the REAL entrypoint for this app -----------
+# Binary location depends on the build plugin:
+#   go/rust/npm/python plugin      -> $SNAP/bin/<app>
+#   cmake/meson/autotools/make C   -> $SNAP/usr/local/bin/<app>  (default prefix; sometimes $SNAP/bin)
+#   dump / nil                     -> $SNAP/opt/<app>/<app>
+# Many apps are config-file driven (no --host/--port flags) — wire $PORT/$BIND
+# into that config instead. See all-dev-glance for a worked config-file example.
+exec $SNAP/bin/vaultwarden

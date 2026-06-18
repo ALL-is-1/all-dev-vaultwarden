@@ -1,0 +1,74 @@
+# snapcraft.yaml — skeleton for an all-dev-* snap.
+# Scaffolded by scripts/new-snap.sh; placeholders vaultwarden / 28265 / https://github.com/dani-garcia/vaultwarden
+# are substituted at scaffold time. Read SNAP_AUTHORING_PLAYBOOK.md before editing.
+#
+# Conventions baked in (matches the working all-dev-* snaps, e.g. docmost):
+#   - name: all-dev-<app>, base: core24, strict confinement, grade: stable
+#   - main service is the app called `daemon`; backing services start `after` it lists them
+#   - config read at runtime via `snapctl get` with a default (no configure hook needed
+#     for simple cases); state under $SNAP_COMMON; binary build output under $SNAP/opt/<app>
+#   - run scripts live in snap/local/ and are placed on PATH as bin/<name> by the `scripts` part
+
+name: all-dev-vaultwarden
+base: core24
+version: 'latest'           # or pin: track upstream tag/commit you built from
+summary: Bitwarden-compatible server         # one line, <= 78 chars
+description: |
+  Bitwarden-compatible server.
+
+grade: stable
+confinement: strict          # strict is the target. Document any unavoidable interface gaps.
+
+icon: snap/gui/icon.png
+
+apps:
+  daemon:
+    command: bin/vaultwarden-run
+    daemon: simple
+    restart-condition: always
+    # after: [postgresql, redis]   # uncomment if you add backing services below
+    plugs:
+      - network
+      - network-bind
+      # - home                     # only if the app must read user files
+      # - removable-media          # only for media/NAS snaps
+
+  # --- Optional backing services -------------------------------------------
+  # Bundle DBs/caches in-snap (loopback only) instead of requiring host services.
+  # postgresql:
+  #   command: bin/postgresql.sh
+  #   daemon: simple
+  #   restart-condition: always
+  #   plugs: [network, network-bind]
+  # redis:
+  #   command: bin/redis.sh
+  #   daemon: simple
+  #   restart-condition: always
+  #   plugs: [network, network-bind]
+
+parts:
+  # --- The application ------------------------------------------------------
+  # Pick ONE build approach for the app part and delete the rest:
+  #   plugin: nil + override-build              -> full control (Node/custom toolchains)
+  #   plugin: dump                              -> prebuilt release tarball, just lay it down
+  #   plugin: go / rust / python / npm          -> language plugin when it Just Works (binary -> $SNAP/bin/<app>)
+  #   plugin: cmake / meson / autotools / make  -> C/C++ (binary usually -> $SNAP/usr/local/bin/<app>)
+  vaultwarden:
+    plugin: rust
+    source: https://github.com/dani-garcia/vaultwarden
+    source-depth: 1
+    build-packages:
+      - pkg-config
+      - libssl-dev
+    stage-packages: []
+  scripts:
+    plugin: dump
+    source: .
+    organize:
+      snap/local/vaultwarden-run: bin/vaultwarden-run
+      # snap/local/postgresql.sh: bin/postgresql.sh
+      # snap/local/redis.sh: bin/redis.sh
+    stage:
+      - bin/vaultwarden-run
+      # - bin/postgresql.sh
+      # - bin/redis.sh

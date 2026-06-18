@@ -1,0 +1,22 @@
+{
+  "appKey": "all-dev-vaultwarden",
+  "name": "vaultwarden",
+  "armadaSnapName": "all-dev-vaultwarden",
+  "shortDescription": "Bitwarden-compatible server",
+  "description": "Bitwarden-compatible server.",
+  "category": "",
+  "visibility": "private",
+  "status": "active",
+  "isInternal": false,
+  "version": "0.1.0",
+  "versionStatus": "active",
+  "artifactType": "container",
+  "artifactRef": "pending",
+  "configuration": {},
+  "inputSchema": {},
+  "runtime": {
+    "ports": [
+      { "port": 28265, "description": "vaultwarden web UI", "scheme": "http" }
+    ]
+  }
+}

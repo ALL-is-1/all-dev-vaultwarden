@@ -1,0 +1,30 @@
+{
+  "snaps": [
+    {
+      "name": "all-dev-vaultwarden",
+      "refresh": true
+    }
+  ],
+  "snap_config": [
+    {
+      "snap": "all-dev-vaultwarden",
+      "settings": {
+        "port": 28265,
+        "bind": "0.0.0.0"
+      }
+    }
+  ],
+  "post_service_actions": [],
+  "interface_connections": [
+    {
+      "plug": "all-dev-vaultwarden:network",
+      "slot": ":network",
+      "action": "connect"
+    },
+    {
+      "plug": "all-dev-vaultwarden:network-bind",
+      "slot": ":network-bind",
+      "action": "connect"
+    }
+  ]
+}
