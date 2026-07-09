@@ -9,7 +9,7 @@
     {
       "snap": "all-dev-vaultwarden",
       "settings": {
-        "port": 28265,
+        "port": 28653,
         "bind": "0.0.0.0"
       }
     }

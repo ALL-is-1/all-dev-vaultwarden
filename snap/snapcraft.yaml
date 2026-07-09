@@ -1,5 +1,5 @@
 # snapcraft.yaml — skeleton for an all-dev-* snap.
-# Scaffolded by scripts/new-snap.sh; placeholders vaultwarden / 28265 / https://github.com/dani-garcia/vaultwarden
+# Scaffolded by scripts/new-snap.sh; placeholders vaultwarden / 28653 / https://github.com/dani-garcia/vaultwarden.git
 # are substituted at scaffold time. Read SNAP_AUTHORING_PLAYBOOK.md before editing.
 #
 # Conventions baked in (matches the working all-dev-* snaps, e.g. docmost):
@@ -55,12 +55,15 @@ parts:
   #   plugin: cmake / meson / autotools / make  -> C/C++ (binary usually -> $SNAP/usr/local/bin/<app>)
   vaultwarden:
     plugin: rust
-    source: https://github.com/dani-garcia/vaultwarden
+    source: https://github.com/dani-garcia/vaultwarden.git
     source-depth: 1
     build-packages:
       - pkg-config
       - libssl-dev
     stage-packages: []
+    override-build: |
+      craftctl default
+      for d in migrations; do [ -d "$CRAFT_PART_BUILD/$d" ] && { mkdir -p "$CRAFT_PART_INSTALL/opt/vaultwarden"; cp -r "$CRAFT_PART_BUILD/$d" "$CRAFT_PART_INSTALL/opt/vaultwarden/"; }; done
   scripts:
     plugin: dump
     source: .

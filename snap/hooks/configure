@@ -6,9 +6,11 @@
 set -e
 
 # Seed defaults the first time, so `snap get all-dev-vaultwarden port` / `… bind` are populated.
-[ -z "$(snapctl get port)" ] && snapctl set port=28265
+# NB: use if-blocks, NOT `[ test ] && cmd` — under `set -e` the latter exits 1 (failing the
+# whole hook + the install) whenever the key is ALREADY set (reinstall / partial config).
+if [ -z "$(snapctl get port)" ]; then snapctl set port=28653; fi
 # bind/listen address: 0.0.0.0 = LAN-reachable, 127.0.0.1 = loopback only
-[ -z "$(snapctl get bind)" ] && snapctl set bind=0.0.0.0
+if [ -z "$(snapctl get bind)" ]; then snapctl set bind=0.0.0.0; fi
 
 # Example validation (uncomment):
 # port="$(snapctl get port)"

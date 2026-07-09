@@ -16,7 +16,7 @@
   "inputSchema": {},
   "runtime": {
     "ports": [
-      { "port": 28265, "description": "vaultwarden web UI", "scheme": "http" }
+      { "port": 28653, "description": "vaultwarden web UI", "scheme": "http" }
     ]
   }
 }

@@ -5,7 +5,7 @@
 set -e
 
 # --- Config (snap set all-dev-vaultwarden key=value) -----------------------------
-PORT=$(snapctl get port); PORT=${PORT:-28265}
+PORT=$(snapctl get port); PORT=${PORT:-28653}
 # bind/listen address: 0.0.0.0 = LAN-reachable, 127.0.0.1 = loopback only
 BIND=$(snapctl get bind); BIND=${BIND:-0.0.0.0}
 export PORT BIND
@@ -31,4 +31,5 @@ cd "$SNAP_COMMON"
 #   dump / nil                     -> $SNAP/opt/<app>/<app>
 # Many apps are config-file driven (no --host/--port flags) — wire $PORT/$BIND
 # into that config instead. See all-dev-glance for a worked config-file example.
+cd "$SNAP/opt/vaultwarden"
 exec $SNAP/bin/vaultwarden
